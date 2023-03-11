@@ -27,17 +27,17 @@ let categoryIDs = [];
 get a number of random categories from the jeopardy API. Create an array of just those IDs. Call the getClues function over that array.
 */
 async function getRandomCategories(number) {
-   categoryIDs.length = 0;
-   categories.length = 0;
-   const res = await axios.get('https://jservice.io/api/random', {
-      params: { count: number },
-   });
-   const randClues = res.data;
-   for (let clue of randClues) {
-      categoryIDs.push(clue.category.id);
-   }
-   getClues(categoryIDs);
-   console.log(categories);
+  categoryIDs.length = 0;
+  categories.length = 0;
+  const res = await axios.get("https://jservice.io/api/random", {
+    params: { count: number },
+  });
+  const randClues = res.data;
+  for (let clue of randClues) {
+    categoryIDs.push(clue.category.id);
+  }
+  getClues(categoryIDs);
+  fillTable();
 }
 
 /* 
@@ -48,28 +48,28 @@ Pulls the category name,
 creates an array for the clues, and creates a clue object with only the question, answer, and showing status
 */
 async function getClues(catID) {
-   for (let category of catID) {
-      const results = await axios.get('http://jservice.io/api/clues', {
-         params: { category },
-      });
+  for (let category of catID) {
+    const results = await axios.get("http://jservice.io/api/clues", {
+      params: { category },
+    });
 
-      const categoryObj = {};
-      const fullClueData = _.sampleSize(results.data, 5);
-      const cluesArr = [];
+    const categoryObj = {};
+    const fullClueData = _.sampleSize(results.data, 5);
+    const cluesArr = [];
 
-      categoryObj.title = fullClueData[0].category.title;
-      categoryObj.clues = cluesArr;
+    categoryObj.title = fullClueData[0].category.title;
+    categoryObj.clues = cluesArr;
 
-      for (let clue of fullClueData) {
-         const clueObj = {};
-         clueObj.question = clue.question;
-         clueObj.answer = clue.answer;
-         clueObj.showing = null;
-         cluesArr.push(clueObj);
-      }
+    for (let clue of fullClueData) {
+      const clueObj = {};
+      clueObj.question = clue.question;
+      clueObj.answer = clue.answer;
+      clueObj.showing = null;
+      cluesArr.push(clueObj);
+    }
 
-      categories.push(categoryObj);
-   }
+    categories.push(categoryObj);
+  }
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
@@ -80,7 +80,28 @@ async function getClues(catID) {
  *   (initally, just show a "?" where the question/answer would go.)
  */
 
-async function fillTable() {}
+async function fillTable() {
+  //filling in table head with categories
+  const tableHead = document.querySelector("#categories tr");
+  for (let category of categories) {
+    const headCell = document.createElement("td");
+    headCell.innerText = `${category.title}`;
+    tableHead.append(headCell);
+  }
+  //Filling in table body, row by row
+  const tableBody = document.querySelector("#clues");
+  for (i = 0; i < NUM_CLUES_PER_CAT; i++) {
+    const newRow = document.createElement("tr");
+    for (let category of categories) {
+      //TODO
+      //Make each cell a div, with classes for Null, clue, and answer.
+      const newCell = document.createElement("td");
+      newCell.innerHTML = `<div class='clue'>${category.clues[i].question}</div><div class="null">?</div><div class='answer'>${category.clues[i].answer}</div>`;
+      newRow.append(newCell);
+    }
+    tableBody.append(newRow);
+  }
+}
 
 /** Handle clicking on a clue: show the question or answer.
  *
