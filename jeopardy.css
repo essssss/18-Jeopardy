@@ -24,8 +24,8 @@ thead {
 td {
   color: white;
   font-size: larger;
-  border: 2px solid #115ff4;
-  height: 8rem;
+  border: 10px solid #115ff4;
+  height: 10rem;
   text-align: center;
   margin: 5px;
   padding: 5px;
@@ -37,17 +37,20 @@ td {
 }
 
 #overlay {
-  position: fixed; /* Sit on top of the page content */
-  display: none; /* Hidden by default */
-  width: 100%; /* Full width (cover the whole page) */
-  height: 100%; /* Full height (cover the whole page) */
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
-  z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-  cursor: pointer; /* Add a pointer on hover */
+  position: fixed;
+  display: none;
+  width: 50%;
+  height: 50%;
+  top: 50%;
+  left: 50%;
+  right: 50%;
+  bottom: 50%;
+  transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  background-color: rgb(6, 12, 233);
+  border: solid #115ff4 15px;
+  border-radius: 200px;
+  z-index: 2;
 }
 
 #overlayText {
@@ -55,7 +58,7 @@ td {
   top: 50%;
   left: 50%;
   font-size: 50px;
-  color: white;
+  color: yellow;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
 }
