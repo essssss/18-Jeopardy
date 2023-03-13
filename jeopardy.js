@@ -24,6 +24,7 @@ const categories = [];
 let categoryIDs = [];
 const tableBody = document.querySelector("#clues");
 const tableHead = document.querySelector("#categories tr");
+const startButton = document.querySelector("#startButton");
 
 /*
 get a number of random categories from the jeopardy API. Create an array of just those IDs. Call the getClues function over that array.
@@ -97,12 +98,13 @@ async function fillTable() {
     const newRow = document.createElement("tr");
     for (j = 0; j < NUM_CATEGORIES; j++) {
       const newCell = document.createElement("td");
-      newCell.innerHTML = `<div class="clue" data-X="${j}" data-Y="${i}">${categories[j].clues[i].showing}</div>`;
+      newCell.innerHTML = `<div class="clue null" data-X="${j}" data-Y="${i}">?</div>`;
       newRow.append(newCell);
     }
 
     tableBody.append(newRow);
   }
+  document.getElementById("overlay").style.display = "none";
 }
 
 /** Handle clicking on a clue: show the question or answer.
@@ -115,13 +117,14 @@ async function fillTable() {
 tableBody.addEventListener("click", handleClick);
 function handleClick(evt) {
   evt.preventDefault;
-  if (evt.target.className === "clue") {
+  if (evt.target.classList.contains("clue")) {
     categoryNum = evt.target.dataset.x;
     clueNum = evt.target.dataset.y;
     const currentClueObj = categories[categoryNum].clues[clueNum];
     if (!currentClueObj.showing) {
       currentClueObj.showing = currentClueObj.question;
       evt.target.innerText = `${currentClueObj.showing}`;
+      evt.target.classList.remove("null");
     } else if (currentClueObj.showing === currentClueObj.question) {
       currentClueObj.showing = currentClueObj.answer;
       evt.target.innerText = `${currentClueObj.showing}`;
@@ -148,12 +151,12 @@ function hideLoadingView() {}
  * - create HTML table
  * */
 
-async function setupAndStart() {}
+async function setupAndStart(evt) {
+  evt.preventDefault;
+  document.getElementById("overlay").style.display = "block";
+  tableBody.innerHTML = "";
+  tableHead.innerHTML = "";
+  await getRandomCategories(NUM_CATEGORIES);
+}
 
-/** On click of start / restart button, set up game. */
-
-// TODO
-
-/** On page load, add event handler for clicking clues */
-
-// TODO
+startButton.addEventListener("click", setupAndStart);
