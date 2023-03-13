@@ -5,3 +5,18 @@
   #8d2ab5
   #74119c
 */
+body {
+  justify-content: center;
+}
+
+table {
+  table-layout: fixed;
+  width: 85%;
+  border-collapse: collapse;
+}
+
+td {
+  border: 2px solid #060ce9;
+  height: 5rem;
+  text-align: center;
+}

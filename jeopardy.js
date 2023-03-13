@@ -22,6 +22,8 @@ const NUM_CLUES_PER_CAT = 5;
 
 const categories = [];
 let categoryIDs = [];
+const tableBody = document.querySelector("#clues");
+const tableHead = document.querySelector("#categories tr");
 
 /*
 get a number of random categories from the jeopardy API. Create an array of just those IDs. Call the getClues function over that array.
@@ -37,7 +39,6 @@ async function getRandomCategories(number) {
     categoryIDs.push(clue.category.id);
   }
   getClues(categoryIDs);
-  fillTable();
 }
 
 /* 
@@ -70,6 +71,7 @@ async function getClues(catID) {
 
     categories.push(categoryObj);
   }
+  await fillTable();
 }
 
 /** Fill the HTML table#jeopardy with the categories & cells for questions.
@@ -82,23 +84,23 @@ async function getClues(catID) {
 
 async function fillTable() {
   //filling in table head with categories
-  const tableHead = document.querySelector("#categories tr");
+
+  tableHead.innerHTML = "";
   for (let category of categories) {
     const headCell = document.createElement("td");
     headCell.innerText = `${category.title}`;
     tableHead.append(headCell);
   }
   //Filling in table body, row by row
-  const tableBody = document.querySelector("#clues");
+
   for (i = 0; i < NUM_CLUES_PER_CAT; i++) {
     const newRow = document.createElement("tr");
-    for (let category of categories) {
-      //TODO
-      //Make each cell a div, with classes for Null, clue, and answer.
+    for (j = 0; j < NUM_CATEGORIES; j++) {
       const newCell = document.createElement("td");
-      newCell.innerHTML = `<div class='clue'>${category.clues[i].question}</div><div class="null">?</div><div class='answer'>${category.clues[i].answer}</div>`;
+      newCell.innerHTML = `<div class="clue" data-X="${j}" data-Y="${i}">${categories[j].clues[i].showing}</div>`;
       newRow.append(newCell);
     }
+
     tableBody.append(newRow);
   }
 }
@@ -110,8 +112,24 @@ async function fillTable() {
  * - if currently "question", show answer & set .showing to "answer"
  * - if currently "answer", ignore click
  * */
-
-function handleClick(evt) {}
+tableBody.addEventListener("click", handleClick);
+function handleClick(evt) {
+  evt.preventDefault;
+  if (evt.target.className === "clue") {
+    categoryNum = evt.target.dataset.x;
+    clueNum = evt.target.dataset.y;
+    const currentClueObj = categories[categoryNum].clues[clueNum];
+    if (!currentClueObj.showing) {
+      currentClueObj.showing = currentClueObj.question;
+      evt.target.innerText = `${currentClueObj.showing}`;
+    } else if (currentClueObj.showing === currentClueObj.question) {
+      currentClueObj.showing = currentClueObj.answer;
+      evt.target.innerText = `${currentClueObj.showing}`;
+    } else if (currentClueObj.showing === currentClueObj.answer) {
+      return;
+    }
+  } else return;
+}
 
 /** Wipe the current Jeopardy board, show the loading spinner,
  * and update the button used to fetch data.
